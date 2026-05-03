@@ -1,0 +1,2694 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AI翻译对比挑战赛 - 比较豆包、DeepSeek、智谱清言、Kimi、文心一言、元宝等AI模型的翻译能力">
+  <meta name="theme-color" content="#FF7A00">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="AI翻译对比">
+  
+  <!-- PWA相关 -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="https://p26-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/ff9b58cc9dd041ecbbb172d179cec8fa~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=20260503105828F3AFFC0667FD95B8873C&rrcfp=f06b921b&x-expires=1780369159&x-signature=CTb5RNM7Ogpt%2FgUEjuHlf%2FtEznk%3D" type="image/png">
+  <link rel="apple-touch-icon" href="https://p26-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/ff9b58cc9dd041ecbbb172d179cec8fa~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=20260503105828F3AFFC0667FD95B8873C&rrcfp=f06b921b&x-expires=1780369159&x-signature=CTb5RNM7Ogpt%2FgUEjuHlf%2FtEznk%3D">
+  
+  <title>AI翻译对比挑战赛</title>
+  
+  <!-- Tailwind CSS v3 (使用CDN的压缩版本) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Font Awesome (使用CDN的压缩版本) -->
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+  <!-- FileSaver.js (使用CDN的压缩版本) -->
+  <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+  
+  <!-- 预加载关键CSS -->
+  <style>
+    /* 关键CSS - 首屏渲染所需的最小样式集 */
+    :root {
+      --primary-color: #FF7A00;
+      --secondary-color: #4F46E5;
+      --background-color: #FFF8E7;
+      --text-color: #374151;
+      --card-background: #FFFFFF;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background-color: var(--background-color);
+      color: var(--text-color);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+    
+    .btn-3d-primary {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 0 0 #cc5f00;
+      transform: translateY(0);
+      transition: all 0.15s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .btn-3d-primary:active {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 0 #cc5f00;
+    }
+    
+    .input-game {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border-radius: 9999px;
+      border: 2px solid #d1d5db;
+      outline: none;
+      transition: all 0.3s ease;
+      background-color: rgba(255, 255, 255, 0.8);
+    }
+    
+    .input-game:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(255, 122, 0, 0.1);
+    }
+    
+    .model-card {
+      background-color: var(--card-background);
+      border-radius: 1rem;
+      padding: 1rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+    
+    .model-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* 骨架屏样式 */
+    .skeleton {
+      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+      background-size: 200% 100%;
+      animation: skeleton-loading 1.5s infinite;
+      border-radius: 0.25rem;
+    }
+    
+    @keyframes skeleton-loading {
+      0% {
+        background-position: 200% 0;
+      }
+      100% {
+        background-position: -200% 0;
+      }
+    }
+    
+    /* 淡入动画 */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .animate-fade-in {
+      animation: fadeIn 0.5s ease-out forwards;
+    }
+    
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+      .container {
+        padding: 0 0.5rem;
+      }
+      
+      h1 {
+        font-size: 1.75rem !important;
+      }
+      
+      .model-card {
+        margin-bottom: 1rem;
+      }
+    }
+    
+    /* 深色模式支持 */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --background-color: #1f2937;
+        --text-color: #f3f4f6;
+        --card-background: #374151;
+      }
+      
+      .input-game {
+        background-color: rgba(55, 65, 81, 0.8);
+        color: var(--text-color);
+        border-color: #4b5563;
+      }
+      
+      .skeleton {
+        background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
+      }
+    }
+  </style>
+  
+  <script>
+    // Tailwind 配置
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FF7A00',
+            secondary: '#4F46E5',
+            doubao: '#FFB347',
+            deepseek: '#6FA8DC',
+            zhipu: '#98FB98',
+            kimi: '#DDA0DD',
+            ernie: '#FFB6C1',
+            yuanbao: '#F0E68C',
+            background: '#FFF8E7',
+            card: '#FFFFFF',
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+          boxShadow: {
+            'card': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+            'card-hover': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+            'button': '0 4px 0 0 rgba(0, 0, 0, 0.2)',
+            'button-pressed': '0 2px 0 0 rgba(0, 0, 0, 0.2)',
+          },
+          animation: {
+            'bounce-slow': 'bounce 2s infinite',
+            'pulse-slow': 'pulse 3s infinite',
+            'shake': 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both',
+            'fade-in': 'fadeIn 0.5s ease-out forwards',
+          },
+          keyframes: {
+            shake: {
+              '10%, 90%': { transform: 'translate3d(-1px, 0, 0)' },
+              '20%, 80%': { transform: 'translate3d(2px, 0, 0)' },
+              '30%, 50%, 70%': { transform: 'translate3d(-4px, 0, 0)' },
+              '40%, 60%': { transform: 'translate3d(4px, 0, 0)' },
+            },
+            fadeIn: {
+              '0%': { opacity: '0', transform: 'translateY(10px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            }
+          }
+        }
+      },
+      // 启用深色模式
+      darkMode: 'media',
+    }
+  </script>
+  
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .text-shadow {
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .transition-all-300 {
+        transition: all 300ms ease-in-out;
+      }
+      .glass-effect {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+      }
+      .card-hover {
+        @apply transition-all duration-300 hover:shadow-card-hover hover:-translate-y-1;
+      }
+      .btn-3d {
+        @apply relative px-6 py-3 rounded-lg font-bold transform active:translate-y-1 transition-all duration-150 overflow-hidden;
+      }
+      .btn-3d-primary {
+        @apply btn-3d bg-primary text-white shadow-[0_4px_0_0_#cc5f00] active:shadow-[0_2px_0_0_#cc5f00] hover:brightness-105;
+      }
+      .btn-3d-secondary {
+        @apply btn-3d bg-white text-primary border-2 border-primary shadow-[0_4px_0_0_#cc5f00] active:shadow-[0_2px_0_0_#cc5f00] hover:bg-primary/10;
+      }
+      .btn-3d-success {
+        @apply btn-3d bg-green-500 text-white shadow-[0_4px_0_0_#22863a] active:shadow-[0_2px_0_0_#22863a] hover:brightness-105;
+      }
+      .btn-3d-info {
+        @apply btn-3d bg-blue-500 text-white shadow-[0_4px_0_0_#1e40af] active:shadow-[0_2px_0_0_#1e40af] hover:brightness-105;
+      }
+      .btn-3d-warning {
+        @apply btn-3d bg-yellow-500 text-white shadow-[0_4px_0_0_#b45309] active:shadow-[0_2px_0_0_#b45309] hover:brightness-105;
+      }
+      .btn-3d-danger {
+        @apply btn-3d bg-red-500 text-white shadow-[0_4px_0_0_#b91c1c] active:shadow-[0_2px_0_0_#b91c1c] hover:brightness-105;
+      }
+      .input-game {
+        @apply w-full px-4 py-3 rounded-full border-2 border-gray-300 focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all duration-300 bg-white/80;
+      }
+      .model-card {
+        @apply rounded-xl p-4 shadow-card transition-all duration-300 hover:shadow-card-hover bg-white border-2;
+      }
+      .diff-highlight {
+        @apply relative inline-block;
+      }
+      .diff-highlight::after {
+        content: '';
+        @apply absolute bottom-0 left-0 w-full h-1.5 bg-yellow-300 opacity-70;
+      }
+      .reflection {
+        @apply absolute top-0 left-0 right-0 h-1/3 bg-gradient-to-b from-white/30 to-transparent z-0;
+      }
+      .progress-bar {
+        @apply w-full bg-gray-200 h-3 rounded-full overflow-hidden;
+      }
+      .progress-value {
+        @apply h-full rounded-full relative transition-all duration-500 ease-out;
+      }
+      .star-rating {
+        @apply flex items-center gap-1;
+      }
+      .star-filled {
+        @apply text-yellow-400;
+      }
+      .star-empty {
+        @apply text-gray-300;
+      }
+      .lazy-load {
+        opacity: 0;
+        transition: opacity 0.5s ease-in-out;
+      }
+      .lazy-load.loaded {
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body class="bg-background min-h-screen font-sans text-gray-800 overflow-x-hidden">
+  <!-- 背景装饰 -->
+  <div class="fixed inset-0 -z-10 overflow-hidden">
+    <div class="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-primary/10"></div>
+    <div class="absolute top-1/4 -left-20 w-60 h-60 rounded-full bg-secondary/10"></div>
+    <div class="absolute bottom-1/3 right-1/4 w-40 h-40 rounded-full bg-green-500/10"></div>
+    <div class="absolute -bottom-20 -left-20 w-80 h-80 rounded-full bg-yellow-500/10"></div>
+  </div>
+
+  <!-- 加载指示器 -->
+  <div id="loading-indicator" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white p-6 rounded-xl shadow-lg flex flex-col items-center">
+      <div class="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div>
+      <p class="text-gray-700 font-medium">正在翻译中，请稍候...</p>
+    </div>
+  </div>
+
+  <div class="container mx-auto px-4 py-8 max-w-6xl">
+    <!-- 头部区域 -->
+    <header class="mb-8 text-center">
+      <div class="flex justify-center items-center gap-3 mb-2">
+        <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center shadow-md">
+          <i class="fa fa-language text-white text-xl"></i>
+        </div>
+        <h1 class="text-4xl font-bold text-primary mb-2 text-shadow">AI翻译对比挑战赛</h1>
+      </div>
+      <p class="text-gray-600 max-w-2xl mx-auto">挑战不同AI模型的翻译能力，看看哪个模型最准确、最流畅！</p>
+      
+      <!-- 游戏状态 -->
+      <div class="flex flex-wrap justify-center items-center gap-4 mt-4">
+        <!-- 生命值 -->
+        <div class="flex items-center gap-2 bg-white/80 px-4 py-2 rounded-full shadow-md">
+          <div class="relative">
+            <svg class="w-6 h-6 text-red-500 fill-current" viewBox="0 0 24 24">
+              <path d="M12,21.35L10.55,20.03C5.4,15.36 2,12.27 2,8.5C2,5.41 4.42,3 7.5,3C9.24,3 10.91,3.81 12,5.08C13.09,3.81 14.76,3 16.5,3C19.58,3 22,5.41 22,8.5C22,12.27 18.6,15.36 13.45,20.03L12,21.35Z" />
+            </svg>
+            <!-- 反光效果 -->
+            <div class="absolute top-0 left-1 w-2 h-2 bg-white/60 rounded-full"></div>
+          </div>
+          <span class="font-bold text-gray-800">5</span>
+        </div>
+        
+        <!-- 金币 -->
+        <div class="flex items-center gap-2 bg-white/80 px-4 py-2 rounded-full shadow-md">
+          <div class="relative">
+            <svg class="w-6 h-6 text-yellow-500 fill-current" viewBox="0 0 24 24">
+              <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6M12,8A4,4 0 0,1 16,12A4,4 0 0,1 12,16A4,4 0 0,1 8,12A4,4 0 0,1 12,8Z" />
+            </svg>
+            <!-- 反光效果 -->
+            <div class="absolute top-0 left-1 w-2 h-2 bg-white/60 rounded-full"></div>
+          </div>
+          <span class="font-bold text-gray-800">250</span>
+        </div>
+        
+        <!-- 关卡 -->
+        <div class="flex items-center gap-2 bg-white/80 px-4 py-2 rounded-full shadow-md">
+          <div class="relative">
+            <svg class="w-6 h-6 text-blue-500 fill-current" viewBox="0 0 24 24">
+              <path d="M11,17V19H13V17H11M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20M11,7V13H13V7H11Z" />
+            </svg>
+            <!-- 反光效果 -->
+            <div class="absolute top-0 left-1 w-2 h-2 bg-white/60 rounded-full"></div>
+          </div>
+          <span class="font-bold text-gray-800">关卡 3/10</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- 主要内容区域 -->
+    <main>
+      <!-- 输入区域 -->
+      <section class="mb-8 bg-white/90 rounded-2xl p-6 shadow-card relative overflow-hidden">
+        <!-- 装饰元素 -->
+        <div class="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-primary/5"></div>
+        <div class="absolute -bottom-10 -left-10 w-40 h-40 rounded-full bg-secondary/5"></div>
+        
+        <div class="relative z-10">
+          <div class="flex flex-col md:flex-row gap-4 items-start">
+            <div class="flex-1 w-full">
+              <label for="source-text" class="block text-sm font-medium text-gray-700 mb-2">输入待翻译文本</label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <i class="fa fa-search text-gray-400"></i>
+                </div>
+                <textarea 
+                  id="source-text" 
+                  rows="3" 
+                  class="input-game pl-10" 
+                  placeholder="请输入或粘贴需要翻译的文本..."
+                  required
+                >你好，欢迎来到AI翻译对比挑战赛！这是一个展示不同AI模型如何翻译相同文本的演示。你可以在下面的结果中看到突出显示的差异。</textarea>
+              </div>
+            </div>
+            
+            <div class="flex flex-col gap-4 w-full md:w-auto">
+              <div>
+                <label for="source-lang" class="block text-sm font-medium text-gray-700 mb-2">源语言</label>
+                <select id="source-lang" class="input-game">
+                  <option value="auto">自动检测</option>
+                  <option value="zh" selected>中文</option>
+                  <option value="en">英文</option>
+                  <option value="ja">日语</option>
+                  <option value="ko">韩语</option>
+                  <option value="fr">法语</option>
+                  <option value="de">德语</option>
+                  <option value="es">西班牙语</option>
+                  <option value="ru">俄语</option>
+                </select>
+              </div>
+              
+              <div>
+                <label for="target-lang" class="block text-sm font-medium text-gray-700 mb-2">目标语言</label>
+                <select id="target-lang" class="input-game">
+                  <option value="zh">中文</option>
+                  <option value="en" selected>英文</option>
+                  <option value="ja">日语</option>
+                  <option value="ko">韩语</option>
+                  <option value="fr">法语</option>
+                  <option value="de">德语</option>
+                  <option value="es">西班牙语</option>
+                  <option value="ru">俄语</option>
+                </select>
+              </div>
+              
+              <button id="translate-btn" class="btn-3d-primary mt-2 h-fit flex items-center justify-center gap-2">
+                <span class="relative z-10"><i class="fa fa-bolt"></i> 开始翻译</span>
+                <div class="reflection"></div>
+              </button>
+            </div>
+          </div>
+          
+          <!-- 选项区域 -->
+          <div class="mt-6 flex flex-wrap gap-4 items-center">
+            <div class="flex items-center">
+              <input type="checkbox" id="sentence-alignment" class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded">
+              <label for="sentence-alignment" class="ml-2 block text-sm text-gray-700">句对齐显示</label>
+            </div>
+            
+            <div class="flex items-center">
+              <input type="checkbox" id="highlight-differences" class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded" checked>
+              <label for="highlight-differences" class="ml-2 block text-sm text-gray-700">高亮显示差异</label>
+            </div>
+            
+            <div class="ml-auto flex flex-wrap gap-2">
+              <button id="download-aligned" class="btn-3d-secondary text-sm">
+                <i class="fa fa-download mr-1"></i>下载句对齐结果
+              </button>
+              <button id="download-unaligned" class="btn-3d-secondary text-sm">
+                <i class="fa fa-download mr-1"></i>下载非对齐结果
+              </button>
+              <button id="download-translations" class="btn-3d-secondary text-sm">
+                <i class="fa fa-download mr-1"></i>下载纯译文
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 结果区域 -->
+      <section class="mb-8">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+          <h2 class="text-xl font-semibold text-gray-800 flex items-center gap-2">
+            <i class="fa fa-trophy text-yellow-500"></i>
+            翻译结果对比
+          </h2>
+          <div class="flex items-center">
+            <span class="text-sm text-gray-500 mr-2">显示模式：</span>
+            <div class="flex rounded-lg overflow-hidden border-2 border-primary">
+              <button id="grid-view" class="px-3 py-1 text-sm bg-primary text-white">网格视图</button>
+              <button id="list-view" class="px-3 py-1 text-sm bg-white text-gray-700 hover:bg-primary/10">列表视图</button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 网格视图 -->
+        <div id="results-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- 豆包 -->
+          <div class="model-card border-doubao bg-doubao/10 transform transition-all duration-300 hover:-translate-y-2 hover:shadow-lg lazy-load">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <div class="w-10 h-10 rounded-full bg-doubao flex items-center justify-center text-white font-bold shadow-md">
+                  <i class="fa fa-cube"></i>
+                </div>
+                <h3 class="font-bold text-lg">豆包</h3>
+              </div>
+              <div class="star-rating">
+                <i class="fa fa-star star-filled"></i>
+                <i class="fa fa-star star-filled"></i>
+                <i class="fa fa-star star-filled"></i>
+                <i class="fa fa-star star-filled"></i>
+                <i class="fa fa-star star-empty"></i>
+              </div>
+            </div>
+            <div class="translation-result" data-model="doubao">
+              Hello, welcome to the AI Translation Comparison Challenge! This is a demonstration showing how different AI models translate the same text. You can see the highlighted differences in the results below.
+            </div>
+            <div class="mt-3">
+              <div class="flex justify-between text-sm mb-1">
+                <span>匹配度</span>
+                <span class="font-bold">95%</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-value bg-doubao" style="width: 95%">
+                  <div class="reflection"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- DeepSeek -->
+          <div class="model-card border-deepseek bg-deepseek/10 transform transition-all duration-300 hover:-translate-y-2 hover:shadow-lg lazy-load">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <div class="w-10 h-10 rounded-full bg-deepseek flex items-center justify-center text-white font-bold shadow-md">
+                  <i class="fa fa-water"></i>
+                </div>
+                <h3 class="font-bold text-lg">DeepSeek</h3>
+              </div>
+              <div class="star-rating">
+                <i class="fa fa-star star-filled"></i>
+                <i class="fa fa-star star-filled"></i>
+                <i class="fa fa-star star-filled"></i>
+                <i class="fa fa-star star-filled"></i>
+                <i class="fa fa-star star-empty"></i>
+              </div>
+            </div>
+            <div class="translation-result" data-model="deepseek">
+              Hello there, welcome to the AI Translation Comparison Challenge! This is a demonstration that showcases how various AI models translate identical text. You can observe the highlighted differences in the results below.
+            </div>
+            <div class="mt-3">
+              <div class="flex justify-between text-sm mb-1">
+                <span>匹配度</span>
+                <span class="font-bold">90%</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-value bg-deepseek" style="width: 90%">
+                  <div class="reflection"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 智谱清言 -->
+          <div class="model-card border-zhipu bg-zhipu/10 transform transition-all duration-300 hover:-translate-y-2 hover:shadow-lg lazy-load">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <div class="w-10 h-10 rounded-full bg-zhipu flex items-center justify-center text-white font-bold shadow-md">
+                  <i class="fa fa-brain"></i>
+                </div>
+                <h3 class="font-bold text-lg">智谱清言</h3>
+              </div>
+              <div class="star-rating">
+                <i class="fa fa-star star-filled"></i>
+                <i class="fa fa-star star-filled"></i>
+                <i class="fa fa-star star-filled"></i>
+                <i class="fa fa-star star-filled"></i>
+                <i class="fa fa-star star-filled"></i>
+              </div>
+            </div>
+            <div class="translation-result" data-model="zhipu">
+              Hello, welcome to the AI Translation Comparison Challenge! This is a demonstration of how different AI models translate the same text. You can see the highlighted differences in the results below.
+            </div>
+            <div class="mt-3">
+              <div class="flex justify-between text-sm mb-1">
+                <span>匹配度</span>
+                <span class="font-bold">96%</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-value bg-zhipu" style="width: 96%">
+                  <div class="reflection"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Kimi -->
+          <div class="model-card border-kimi bg-kimi/10 transform transition-all duration-300 hover:-translate-y-2 hover:shadow-lg lazy-load">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <div class="w-10 h-10 rounded-full bg-kimi flex items-center justify-center text-white font-bold shadow-md">
+                  <i class="fa fa-heart"></i>
+                </div>
+                <h3 class="font-bold text-lg">Kimi</h3>
+              </div>
+              <div class="star-rating">
+                <i class="fa fa-star star-filled"></i>
+                <i class="fa fa-star star-filled"></i>
+                <i class="fa fa-star star-filled"></i>
+                <i class="fa fa-star star-empty"></i>
+                <i class="fa fa-star star-empty"></i>
+              </div>
+            </div>
+            <div class="translation-result" data-model="kimi">
+              Hi, welcome to the AI Translation Challenge! This is an example showing how different AI models translate the same text. You can see the highlighted differences in the results below.
+            </div>
+            <div class="mt-3">
+              <div class="flex justify-between text-sm mb-1">
+                <span>匹配度</span>
+                <span class="font-bold">88%</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-value bg-kimi" style="width: 88%">
+                  <div class="reflection"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 文心一言 -->
+          <div class="model-card border-ernie bg-ernie/10 transform transition-all duration-300 hover:-translate-y-2 hover:shadow-lg lazy-load">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <div class="w-10 h-10 rounded-full bg-ernie flex items-center justify-center text-white font-bold shadow-md">
+                  <i class="fa fa-comment"></i>
+                </div>
+                <h3 class="font-bold text-lg">文心一言</h3>
+              </div>
+              <div class="star-rating">
+                <i class="fa fa-star star-filled"></i>
+                <i class="fa fa-star star-filled"></i>
+                <i class="fa fa-star star-filled"></i>
+                <i class="fa fa-star star-filled"></i>
+                <i class="fa fa-star star-empty"></i>
+              </div>
+            </div>
+            <div class="translation-result" data-model="ernie">
+              Hello, welcome to participate in the AI Translation Challenge! This is a demonstration of how different AI models translate the same text. You can see the highlighted differences in the results below.
+            </div>
+            <div class="mt-3">
+              <div class="flex justify-between text-sm mb-1">
+                <span>匹配度</span>
+                <span class="font-bold">94%</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-value bg-ernie" style="width: 94%">
+                  <div class="reflection"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 元宝 -->
+          <div class="model-card border-yuanbao bg-yuanbao/10 transform transition-all duration-300 hover:-translate-y-2 hover:shadow-lg lazy-load">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <div class="w-10 h-10 rounded-full bg-yuanbao flex items-center justify-center text-white font-bold shadow-md">
+                  <i class="fa fa-coins"></i>
+                </div>
+                <h3 class="font-bold text-lg">元宝</h3>
+              </div>
+              <div class="star-rating">
+                <i class="fa fa-star star-filled"></i>
+                <i class="fa fa-star star-filled"></i>
+                <i class="fa fa-star star-filled"></i>
+                <i class="fa fa-star star-empty"></i>
+                <i class="fa fa-star star-empty"></i>
+              </div>
+            </div>
+            <div class="translation-result" data-model="yuanbao">
+              Hey, welcome to the AI Translation Game! This is an example of how different AI models translate the same text. You can see the highlighted differences in the results below.
+            </div>
+            <div class="mt-3">
+              <div class="flex justify-between text-sm mb-1">
+                <span>匹配度</span>
+                <span class="font-bold">82%</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-value bg-yuanbao" style="width: 82%">
+                  <div class="reflection"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 列表视图 (默认隐藏) -->
+        <div id="results-list" class="hidden space-y-4">
+          <!-- 豆包 -->
+          <div class="model-card border-doubao bg-white transform transition-all duration-300 hover:-translate-y-1 hover:shadow-lg lazy-load">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <div class="w-10 h-10 rounded-full bg-doubao flex items-center justify-center text-white font-bold shadow-md">
+                  <i class="fa fa-cube"></i>
+                </div>
+                <h3 class="font-bold text-lg">豆包</h3>
+              </div>
+              <div class="flex items-center gap-4">
+                <div class="star-rating">
+                  <i class="fa fa-star star-filled"></i>
+                  <i class="fa fa-star star-filled"></i>
+                  <i class="fa fa-star star-filled"></i>
+                  <i class="fa fa-star star-filled"></i>
+                  <i class="fa fa-star star-empty"></i>
+                </div>
+                <span class="font-bold text-doubao">95%</span>
+              </div>
+            </div>
+            <div class="translation-result" data-model="doubao-list">
+              Hello, welcome to the AI Translation Comparison Challenge! This is a demonstration showing how different AI models translate the same text. You can see the highlighted differences in the results below.
+            </div>
+            <div class="mt-3">
+              <div class="progress-bar">
+                <div class="progress-value bg-doubao" style="width: 95%">
+                  <div class="reflection"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- DeepSeek -->
+          <div class="model-card border-deepseek bg-white transform transition-all duration-300 hover:-translate-y-1 hover:shadow-lg lazy-load">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <div class="w-10 h-10 rounded-full bg-deepseek flex items-center justify-center text-white font-bold shadow-md">
+                  <i class="fa fa-water"></i>
+                </div>
+                <h3 class="font-bold text-lg">DeepSeek</h3>
+              </div>
+              <div class="flex items-center gap-4">
+                <div class="star-rating">
+                  <i class="fa fa-star star-filled"></i>
+                  <i class="fa fa-star star-filled"></i>
+                  <i class="fa fa-star star-filled"></i>
+                  <i class="fa fa-star star-filled"></i>
+                  <i class="fa fa-star star-empty"></i>
+                </div>
+                <span class="font-bold text-deepseek">90%</span>
+              </div>
+            </div>
+            <div class="translation-result" data-model="deepseek-list">
+              Hello there, welcome to the AI Translation Comparison Challenge! This is a demonstration that showcases how various AI models translate identical text. You can observe the highlighted differences in the results below.
+            </div>
+            <div class="mt-3">
+              <div class="progress-bar">
+                <div class="progress-value bg-deepseek" style="width: 90%">
+                  <div class="reflection"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 智谱清言 -->
+          <div class="model-card border-zhipu bg-white transform transition-all duration-300 hover:-translate-y-1 hover:shadow-lg lazy-load">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <div class="w-10 h-10 rounded-full bg-zhipu flex items-center justify-center text-white font-bold shadow-md">
+                  <i class="fa fa-brain"></i>
+                </div>
+                <h3 class="font-bold text-lg">智谱清言</h3>
+              </div>
+              <div class="flex items-center gap-4">
+                <div class="star-rating">
+                  <i class="fa fa-star star-filled"></i>
+                  <i class="fa fa-star star-filled"></i>
+                  <i class="fa fa-star star-filled"></i>
+                  <i class="fa fa-star star-filled"></i>
+                  <i class="fa fa-star star-filled"></i>
+                </div>
+                <span class="font-bold text-zhipu">96%</span>
+              </div>
+            </div>
+            <div class="translation-result" data-model="zhipu-list">
+              Hello, welcome to the AI Translation Comparison Challenge! This is a demonstration of how different AI models translate the same text. You can see the highlighted differences in the results below.
+            </div>
+            <div class="mt-3">
+              <div class="progress-bar">
+                <div class="progress-value bg-zhipu" style="width: 96%">
+                  <div class="reflection"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Kimi -->
+          <div class="model-card border-kimi bg-white transform transition-all duration-300 hover:-translate-y-1 hover:shadow-lg lazy-load">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <div class="w-10 h-10 rounded-full bg-kimi flex items-center justify-center text-white font-bold shadow-md">
+                  <i class="fa fa-heart"></i>
+                </div>
+                <h3 class="font-bold text-lg">Kimi</h3>
+              </div>
+              <div class="flex items-center gap-4">
+                <div class="star-rating">
+                  <i class="fa fa-star star-filled"></i>
+                  <i class="fa fa-star star-filled"></i>
+                  <i class="fa fa-star star-filled"></i>
+                  <i class="fa fa-star star-empty"></i>
+                  <i class="fa fa-star star-empty"></i>
+                </div>
+                <span class="font-bold text-kimi">88%</span>
+              </div>
+            </div>
+            <div class="translation-result" data-model="kimi-list">
+              Hi, welcome to the AI Translation Challenge! This is an example showing how different AI models translate the same text. You can see the highlighted differences in the results below.
+            </div>
+            <div class="mt-3">
+              <div class="progress-bar">
+                <div class="progress-value bg-kimi" style="width: 88%">
+                  <div class="reflection"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 文心一言 -->
+          <div class="model-card border-ernie bg-white transform transition-all duration-300 hover:-translate-y-1 hover:shadow-lg lazy-load">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <div class="w-10 h-10 rounded-full bg-ernie flex items-center justify-center text-white font-bold shadow-md">
+                  <i class="fa fa-comment"></i>
+                </div>
+                <h3 class="font-bold text-lg">文心一言</h3>
+              </div>
+              <div class="flex items-center gap-4">
+                <div class="star-rating">
+                  <i class="fa fa-star star-filled"></i>
+                  <i class="fa fa-star star-filled"></i>
+                  <i class="fa fa-star star-filled"></i>
+                  <i class="fa fa-star star-filled"></i>
+                  <i class="fa fa-star star-empty"></i>
+                </div>
+                <span class="font-bold text-ernie">94%</span>
+              </div>
+            </div>
+            <div class="translation-result" data-model="ernie-list">
+              Hello, welcome to participate in the AI Translation Challenge! This is a demonstration of how different AI models translate the same text. You can see the highlighted differences in the results below.
+            </div>
+            <div class="mt-3">
+              <div class="progress-bar">
+                <div class="progress-value bg-ernie" style="width: 94%">
+                  <div class="reflection"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 元宝 -->
+          <div class="model-card border-yuanbao bg-white transform transition-all duration-300 hover:-translate-y-1 hover:shadow-lg lazy-load">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <div class="w-10 h-10 rounded-full bg-yuanbao flex items-center justify-center text-white font-bold shadow-md">
+                  <i class="fa fa-coins"></i>
+                </div>
+                <h3 class="font-bold text-lg">元宝</h3>
+              </div>
+              <div class="flex items-center gap-4">
+                <div class="star-rating">
+                  <i class="fa fa-star star-filled"></i>
+                  <i class="fa fa-star star-filled"></i>
+                  <i class="fa fa-star star-filled"></i>
+                  <i class="fa fa-star star-empty"></i>
+                  <i class="fa fa-star star-empty"></i>
+                </div>
+                <span class="font-bold text-yuanbao">82%</span>
+              </div>
+            </div>
+            <div class="translation-result" data-model="yuanbao-list">
+              Hey, welcome to the AI Translation Game! This is an example of how different AI models translate the same text. You can see the highlighted differences in the results below.
+            </div>
+            <div class="mt-3">
+              <div class="progress-bar">
+                <div class="progress-value bg-yuanbao" style="width: 82%">
+                  <div class="reflection"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- 句对齐显示区域 (默认隐藏) -->
+      <section id="alignment-section" class="mb-8 bg-white/90 rounded-2xl p-6 shadow-card hidden">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
+          <i class="fa fa-columns text-primary"></i>
+          句对齐翻译结果
+        </h2>
+        <div class="overflow-x-auto">
+          <div class="min-w-full divide-y divide-gray-200 rounded-lg overflow-hidden">
+            <div class="bg-gray-50 grid grid-cols-7">
+              <div class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider col-span-2">原文</div>
+              <div class="px-4 py-3 text-left text-xs font-medium text-doubao uppercase tracking-wider">豆包</div>
+              <div class="px-4 py-3 text-left text-xs font-medium text-deepseek uppercase tracking-wider">DeepSeek</div>
+              <div class="px-4 py-3 text-left text-xs font-medium text-zhipu uppercase tracking-wider">智谱清言</div>
+              <div class="px-4 py-3 text-left text-xs font-medium text-kimi uppercase tracking-wider">Kimi</div>
+              <div class="px-4 py-3 text-left text-xs font-medium text-ernie uppercase tracking-wider">文心一言</div>
+              <div class="px-4 py-3 text-left text-xs font-medium text-yuanbao uppercase tracking-wider">元宝</div>
+            </div>
+            <div class="bg-white divide-y divide-gray-200" id="alignment-table">
+              <div class="grid grid-cols-7">
+                <div class="px-4 py-3 whitespace-nowrap col-span-2">你好，欢迎来到AI翻译对比挑战赛！</div>
+                <div class="px-4 py-3 whitespace-nowrap bg-doubao/10">Hello, welcome to the AI Translation Comparison Challenge!</div>
+                <div class="px-4 py-3 whitespace-nowrap bg-deepseek/10">Hello there, welcome to the AI Translation Comparison Challenge!</div>
+                <div class="px-4 py-3 whitespace-nowrap bg-zhipu/10">Hello, welcome to the AI Translation Comparison Challenge!</div>
+                <div class="px-4 py-3 whitespace-nowrap bg-kimi/10">Hi, welcome to the AI Translation Challenge!</div>
+                <div class="px-4 py-3 whitespace-nowrap bg-ernie/10">Hello, welcome to participate in the AI Translation Challenge!</div>
+                <div class="px-4 py-3 whitespace-nowrap bg-yuanbao/10">Hey, welcome to the AI Translation Game!</div>
+              </div>
+              <div class="grid grid-cols-7">
+                <div class="px-4 py-3 whitespace-nowrap col-span-2">这是一个展示不同AI模型如何翻译相同文本的演示。</div>
+                <div class="px-4 py-3 whitespace-nowrap bg-doubao/10">This is a demonstration showing how different AI models translate the same text.</div>
+                <div class="px-4 py-3 whitespace-nowrap bg-deepseek/10">This is a demonstration that showcases how various AI models translate identical text.</div>
+                <div class="px-4 py-3 whitespace-nowrap bg-zhipu/10">This is a demonstration of how different AI models translate the same text.</div>
+                <div class="px-4 py-3 whitespace-nowrap bg-kimi/10">This is an example showing how different AI models translate the same text.</div>
+                <div class="px-4 py-3 whitespace-nowrap bg-ernie/10">This is a demonstration of how different AI models translate the same text.</div>
+                <div class="px-4 py-3 whitespace-nowrap bg-yuanbao/10">This is an example of how different AI models translate the same text.</div>
+              </div>
+              <div class="grid grid-cols-7">
+                <div class="px-4 py-3 whitespace-nowrap col-span-2">你可以在下面的结果中看到突出显示的差异。</div>
+                <div class="px-4 py-3 whitespace-nowrap bg-doubao/10">You can see the highlighted differences in the results below.</div>
+                <div class="px-4 py-3 whitespace-nowrap bg-deepseek/10">You can observe the highlighted differences in the results below.</div>
+                <div class="px-4 py-3 whitespace-nowrap bg-zhipu/10">You can see the highlighted differences in the results below.</div>
+                <div class="px-4 py-3 whitespace-nowrap bg-kimi/10">You can see the highlighted differences in the results below.</div>
+                <div class="px-4 py-3 whitespace-nowrap bg-ernie/10">You can see the highlighted differences in the results below.</div>
+                <div class="px-4 py-3 whitespace-nowrap bg-yuanbao/10">You can see the highlighted differences in the results below.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- 差异分析区域 -->
+      <section class="mb-8 bg-white/90 rounded-2xl p-6 shadow-card">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
+          <i class="fa fa-chart-bar text-primary"></i>
+          翻译差异分析
+        </h2>
+        
+        <!-- 最佳翻译展示 -->
+        <div class="mb-6 p-4 rounded-xl bg-green-50 border-2 border-green-500 shadow-[0_4px_0_0_#22863a]">
+          <div class="flex items-center gap-2 mb-2">
+            <i class="fa fa-trophy text-yellow-500 text-xl"></i>
+            <h3 class="text-lg font-bold text-green-700">本轮最佳翻译</h3>
+          </div>
+          <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-zhipu flex items-center justify-center text-white font-bold shadow-md">
+              <i class="fa fa-brain"></i>
+            </div>
+            <div>
+              <p class="font-bold text-green-700">智谱清言</p>
+              <p class="text-green-800">Hello, welcome to the AI Translation Comparison Challenge! This is a demonstration of how different AI models translate the same text. You can see the highlighted differences in the results below.</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <h3 class="text-lg font-medium text-gray-700 mb-2 flex items-center gap-2">
+              <i class="fa fa-lightbulb-o text-yellow-500"></i>
+              用词差异
+            </h3>
+            <ul class="list-disc list-inside space-y-2 text-gray-600 bg-white p-4 rounded-lg shadow-sm">
+              <li>"Hello" vs "Hello there" vs "Hi" vs "Hey" - 不同模型对问候语的处理方式</li>
+              <li>"welcome to" vs "welcome to participate in" - 对"欢迎"的不同翻译</li>
+              <li>"demonstration" vs "example" - 对"演示"的不同翻译</li>
+              <li>"showing" vs "showcases" vs "of" - 对"展示"的不同翻译</li>
+              <li>"different" vs "various" - 对"不同"的不同翻译</li>
+              <li>"same text" vs "identical text" - 对"相同文本"的不同翻译</li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-lg font-medium text-gray-700 mb-2 flex items-center gap-2">
+              <i class="fa fa-cogs text-blue-500"></i>
+              句式差异
+            </h3>
+            <ul class="list-disc list-inside space-y-2 text-gray-600 bg-white p-4 rounded-lg shadow-sm">
+              <li>豆包和智谱清言使用更简洁的句式结构</li>
+              <li>DeepSeek倾向于使用更正式、更完整的句式，添加了"there"和"that"</li>
+              <li>Kimi和元宝在表述上更口语化，使用"Hi"和"Hey"</li>
+              <li>文心一言在翻译"欢迎"时添加了"participate in"，使表达更完整</li>
+              <li>各模型在定语从句的使用上有所不同</li>
+            </ul>
+          </div>
+        </div>
+        
+        <!-- 模型性能排名 -->
+        <div class="mt-6">
+          <h3 class="text-lg font-medium text-gray-700 mb-3 flex items-center gap-2">
+            <i class="fa fa-ranking-star text-primary"></i>
+            模型性能排名
+          </h3>
+          <div class="space-y-3">
+            <!-- 排名1 -->
+            <div class="flex items-center gap-3 bg-white p-3 rounded-lg shadow-sm transform transition-all duration-300 hover:shadow-md">
+              <div class="w-8 h-8 rounded-full bg-yellow-500 flex items-center justify-center text-white font-bold shadow-md">1</div>
+              <div class="w-10 h-10 rounded-full bg-zhipu flex items-center justify-center text-white font-bold shadow-md">
+                <i class="fa fa-brain"></i>
+              </div>
+              <div class="flex-1">
+                <div class="flex justify-between items-center mb-1">
+                  <p class="font-bold">智谱清言</p>
+                  <p class="font-bold text-zhipu">96%</p>
+                </div>
+                <div class="progress-bar">
+                  <div class="progress-value bg-zhipu" style="width: 96%">
+                    <div class="reflection"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- 排名2 -->
+            <div class="flex items-center gap-3 bg-white p-3 rounded-lg shadow-sm transform transition-all duration-300 hover:shadow-md">
+              <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-white font-bold shadow-md">2</div>
+              <div class="w-10 h-10 rounded-full bg-doubao flex items-center justify-center text-white font-bold shadow-md">
+                <i class="fa fa-cube"></i>
+              </div>
+              <div class="flex-1">
+                <div class="flex justify-between items-center mb-1">
+                  <p class="font-bold">豆包</p>
+                  <p class="font-bold text-doubao">95%</p>
+                </div>
+                <div class="progress-bar">
+                  <div class="progress-value bg-doubao" style="width: 95%">
+                    <div class="reflection"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- 排名3 -->
+            <div class="flex items-center gap-3 bg-white p-3 rounded-lg shadow-sm transform transition-all duration-300 hover:shadow-md">
+              <div class="w-8 h-8 rounded-full bg-amber-700 flex items-center justify-center text-white font-bold shadow-md">3</div>
+              <div class="w-10 h-10 rounded-full bg-ernie flex items-center justify-center text-white font-bold shadow-md">
+                <i class="fa fa-comment"></i>
+              </div>
+              <div class="flex-1">
+                <div class="flex justify-between items-center mb-1">
+                  <p class="font-bold">文心一言</p>
+                  <p class="font-bold text-ernie">94%</p>
+                </div>
+                <div class="progress-bar">
+                  <div class="progress-value bg-ernie" style="width: 94%">
+                    <div class="reflection"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- 游戏化关卡地图 -->
+      <section class="mb-8 bg-white/90 rounded-2xl p-6 shadow-card">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
+          <i class="fa fa-map-signs text-primary"></i>
+          挑战关卡
+        </h2>
+        
+        <div class="levels-map flex flex-col gap-8 items-center relative py-4">
+          <!-- 背景路径 -->
+          <div class="absolute z-0 w-2 bg-gray-200 h-full left-1/2 transform -translate-x-1/2"></div>
+        
+          <!-- 完成的关卡 -->
+          <div class="relative z-10">
+            <button class="w-16 h-16 rounded-full bg-green-100 border-4 border-green-500 flex items-center justify-center shadow-md transform transition hover:scale-105">
+              <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </button>
+            <div class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap">
+              基础词汇
+            </div>
+          </div>
+        
+          <!-- 完成的关卡 -->
+          <div class="relative z-10 -ml-16"> <!-- 使用负margin创建弧形路径效果 -->
+            <button class="w-16 h-16 rounded-full bg-green-100 border-4 border-green-500 flex items-center justify-center shadow-md transform transition hover:scale-105">
+              <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </button>
+            <div class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap">
+              日常对话
+            </div>
+          </div>
+        
+          <!-- 当前关卡 -->
+          <div class="relative z-10 ml-16"> <!-- 使用正margin再次改变方向 -->
+            <button class="w-16 h-16 rounded-full bg-primary border-4 border-primary/70 flex items-center justify-center shadow-md transform transition hover:scale-105 animate-pulse">
+              <span class="text-white font-bold text-xl">3</span>
+            </button>
+            <div class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-primary text-white px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap">
+              专业术语
+            </div>
+          </div>
+        
+          <!-- 未解锁关卡 -->
+          <div class="relative z-10 -ml-8">
+            <button class="w-16 h-16 rounded-full bg-gray-100 border-4 border-gray-300 flex items-center justify-center shadow-md opacity-70" disabled>
+              <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            </button>
+            <div class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-400 text-white px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap">
+              文学作品
+            </div>
+          </div>
+        
+          <!-- 未解锁关卡 -->
+          <div class="relative z-10 ml-8">
+            <button class="w-16 h-16 rounded-full bg-gray-100 border-4 border-gray-300 flex items-center justify-center shadow-md opacity-70" disabled>
+              <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            </button>
+            <div class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-400 text-white px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap">
+              商务合同
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- 底部区域 -->
+    <footer class="text-center text-gray-500 text-sm mt-12">
+      <p>AI翻译对比挑战赛 &copy; 2026 | 支持豆包、DeepSeek、智谱清言、Kimi、文心一言、元宝等AI模型</p>
+      <div class="mt-2 flex justify-center gap-4">
+        <button id="theme-toggle" class="text-gray-500 hover:text-primary transition-colors">
+          <i class="fa fa-moon-o"></i>
+        </button>
+        <button id="about-btn" class="text-gray-500 hover:text-primary transition-colors">
+          <i class="fa fa-info-circle"></i>
+        </button>
+        <button id="feedback-btn" class="text-gray-500 hover:text-primary transition-colors">
+          <i class="fa fa-comment-o"></i>
+        </button>
+      </div>
+    </footer>
+  </div>
+
+  <!-- 模态框 - API配置 -->
+  <div id="api-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-xl p-6 max-w-md w-full mx-4 transform transition-all duration-300 scale-95 opacity-0" id="modal-content">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-xl font-bold text-primary flex items-center gap-2">
+          <i class="fa fa-cog"></i>
+          API配置
+        </h3>
+        <button id="close-modal" class="text-gray-500 hover:text-gray-700 transition-colors duration-300">
+          <i class="fa fa-times"></i>
+        </button>
+      </div>
+      <div class="space-y-4">
+        <p class="text-gray-600 text-sm">
+          您可以配置自己的API密钥以使用真实的翻译服务。如果不配置，将使用模拟翻译数据。
+        </p>
+        
+        <div class="space-y-3">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">豆包 API Key</label>
+            <input type="password" class="input-game" placeholder="请输入API Key" id="doubao-api-key">
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">DeepSeek API Key</label>
+            <input type="password" class="input-game" placeholder="请输入API Key" id="deepseek-api-key">
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">智谱清言 API Key</label>
+            <input type="password" class="input-game" placeholder="请输入API Key" id="zhipu-api-key">
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Kimi API Key</label>
+            <input type="password" class="input-game" placeholder="请输入API Key" id="kimi-api-key">
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">文心一言 API Key</label>
+            <input type="password" class="input-game" placeholder="请输入API Key" id="ernie-api-key">
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">元宝 API Key</label>
+            <input type="password" class="input-game" placeholder="请输入API Key" id="yuanbao-api-key">
+          </div>
+        </div>
+        
+        <div class="flex justify-end gap-2 mt-4">
+          <button id="cancel-api" class="btn-3d-secondary">取消</button>
+          <button id="save-api" class="btn-3d-primary">保存配置</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 浮动操作按钮 -->
+  <div class="fixed bottom-6 right-6 flex flex-col gap-3 z-40">
+    <button id="show-api-btn" class="w-14 h-14 rounded-full bg-primary text-white shadow-lg flex items-center justify-center transform transition-all duration-300 hover:scale-110 hover:bg-primary/90 active:scale-95">
+      <i class="fa fa-cog text-xl"></i>
+    </button>
+    <button id="show-help-btn" class="w-14 h-14 rounded-full bg-secondary text-white shadow-lg flex items-center justify-center transform transition-all duration-300 hover:scale-110 hover:bg-secondary/90 active:scale-95">
+      <i class="fa fa-question text-xl"></i>
+    </button>
+  </div>
+
+  <!-- 帮助提示模态框 -->
+  <div id="help-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-xl p-6 max-w-lg w-full mx-4 transform transition-all duration-300 scale-95 opacity-0" id="help-modal-content">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-xl font-bold text-primary flex items-center gap-2">
+          <i class="fa fa-question-circle"></i>
+          游戏帮助
+        </h3>
+        <button id="close-help-modal" class="text-gray-500 hover:text-gray-700 transition-colors duration-300">
+          <i class="fa fa-times"></i>
+        </button>
+      </div>
+      <div class="space-y-4">
+        <div>
+          <h4 class="font-bold text-lg text-gray-800 mb-2">游戏目标</h4>
+          <p class="text-gray-600">
+            在AI翻译对比挑战赛中，您可以输入任意文本，查看不同AI模型的翻译结果，并比较它们的准确性和流畅度。
+          </p>
+        </div>
+        
+        <div>
+          <h4 class="font-bold text-lg text-gray-800 mb-2">如何开始</h4>
+          <ol class="list-decimal list-inside space-y-1 text-gray-600">
+            <li>在输入框中输入您想要翻译的文本</li>
+            <li>选择源语言和目标语言</li>
+            <li>点击"开始翻译"按钮</li>
+            <li>查看各AI模型的翻译结果和评分</li>
+          </ol>
+        </div>
+        
+        <div>
+          <h4 class="font-bold text-lg text-gray-800 mb-2">关于评分系统</h4>
+          <p class="text-gray-600">
+            评分系统基于多个因素自动计算，包括：
+          </p>
+          <ul class="list-disc list-inside space-y-1 text-gray-600 mt-1">
+            <li>翻译准确性：与标准翻译的匹配程度</li>
+            <li>语言流畅度：译文的自然程度和可读性</li>
+            <li>术语一致性：专业术语的正确使用</li>
+            <li>文化适应性：考虑目标语言的文化习惯</li>
+          </ul>
+        </div>
+        
+        <div class="pt-2">
+          <button id="got-it-btn" class="btn-3d-primary w-full">
+            <span class="relative z-10">我知道了</span>
+            <div class="reflection"></div>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PWA Service Worker 注册 -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(registration => {
+            console.log('Service Worker 注册成功:', registration.scope);
+          })
+          .catch(error => {
+            console.log('Service Worker 注册失败:', error);
+          });
+      });
+    }
+  </script>
+
+  <!-- 主要JavaScript代码 -->
+  <script>
+    // 延迟加载非关键JavaScript
+    document.addEventListener('DOMContentLoaded', () => {
+      // 模型配置
+      const models = [
+        { id: 'doubao', name: '豆包', color: '#FFB347', icon: 'fa-cube', baseScore: 95 },
+        { id: 'deepseek', name: 'DeepSeek', color: '#6FA8DC', icon: 'fa-water', baseScore: 90 },
+        { id: 'zhipu', name: '智谱清言', color: '#98FB98', icon: 'fa-brain', baseScore: 96 },
+        { id: 'kimi', name: 'Kimi', color: '#DDA0DD', icon: 'fa-heart', baseScore: 88 },
+        { id: 'ernie', name: '文心一言', color: '#FFB6C1', icon: 'fa-comment', baseScore: 94 },
+        { id: 'yuanbao', name: '元宝', color: '#F0E68C', icon: 'fa-coins', baseScore: 82 }
+      ];
+
+      // 中英文对照词典（用于模拟翻译）
+      const translationDictionary = {
+        '你好': 'Hello',
+        '欢迎': 'welcome',
+        '欢迎来到': 'welcome to',
+        '参加': 'participate in',
+        'AI': 'AI',
+        '翻译': 'Translation',
+        '对比': 'Comparison',
+        '挑战赛': 'Challenge',
+        '挑战': 'Challenge',
+        '游戏': 'Game',
+        '这是': 'This is',
+        '一个': 'a',
+        '展示': 'demonstration',
+        '演示': 'demonstration',
+        '示例': 'example',
+        '不同': 'different',
+        '各种': 'various',
+        '模型': 'models',
+        '如何': 'how',
+        '翻译': 'translate',
+        '相同': 'same',
+        ' identical': 'identical',
+        '文本': 'text',
+        '你': 'You',
+        '可以': 'can',
+        '在': 'in',
+        '下面': 'below',
+        '结果': 'results',
+        '中': 'in',
+        '看到': 'see',
+        '观察': 'observe',
+        '突出': 'highlighted',
+        '高亮': 'highlighted',
+        '差异': 'differences',
+        '！': '!',
+        '。': '.',
+        '，': ',',
+        '！': '!',
+        '？': '?'
+      };
+
+      // 模型特定的翻译风格
+      const modelStyles = {
+        'doubao': {
+          prefix: '',
+          suffix: '',
+          substitutions: {
+            '展示': 'showing',
+            '不同': 'different'
+          },
+          scoreAdjustment: 0
+        },
+        'deepseek': {
+          prefix: '',
+          suffix: '',
+          substitutions: {
+            '你好': 'Hello there',
+            '欢迎来到': 'welcome to',
+            '展示': 'demonstration that showcases',
+            '不同': 'various',
+            '相同': 'identical',
+            '看到': 'observe'
+          },
+          scoreAdjustment: -5
+        },
+        'zhipu': {
+          prefix: '',
+          suffix: '',
+          substitutions: {
+            '展示': 'demonstration of',
+            '不同': 'different'
+          },
+          scoreAdjustment: 1
+        },
+        'kimi': {
+          prefix: '',
+          suffix: '',
+          substitutions: {
+            '你好': 'Hi',
+            '欢迎来到': 'welcome to',
+            '展示': 'example showing',
+            '不同': 'different'
+          },
+          scoreAdjustment: -7
+        },
+        'ernie': {
+          prefix: '',
+          suffix: '',
+          substitutions: {
+            '欢迎来到': 'welcome to participate in',
+            '展示': 'demonstration of',
+            '不同': 'different'
+          },
+          scoreAdjustment: -1
+        },
+        'yuanbao': {
+          prefix: '',
+          suffix: '',
+          substitutions: {
+            '你好': 'Hey',
+            '欢迎来到': 'welcome to',
+            '展示': 'example of',
+            '不同': 'different'
+          },
+          scoreAdjustment: -13
+        }
+      };
+
+      // DOM元素
+      const sourceText = document.getElementById('source-text');
+      const sourceLang = document.getElementById('source-lang');
+      const targetLang = document.getElementById('target-lang');
+      const translateBtn = document.getElementById('translate-btn');
+      const sentenceAlignment = document.getElementById('sentence-alignment');
+      const highlightDifferences = document.getElementById('highlight-differences');
+      const resultsGrid = document.getElementById('results-grid');
+      const resultsList = document.getElementById('results-list');
+      const gridView = document.getElementById('grid-view');
+      const listView = document.getElementById('list-view');
+      const alignmentSection = document.getElementById('alignment-section');
+      const alignmentTable = document.getElementById('alignment-table');
+      const downloadAligned = document.getElementById('download-aligned');
+      const downloadUnaligned = document.getElementById('download-unaligned');
+      const downloadTranslations = document.getElementById('download-translations');
+      const apiModal = document.getElementById('api-modal');
+      const modalContent = document.getElementById('modal-content');
+      const closeModal = document.getElementById('close-modal');
+      const cancelApi = document.getElementById('cancel-api');
+      const saveApi = document.getElementById('save-api');
+      const showApiBtn = document.getElementById('show-api-btn');
+      const helpModal = document.getElementById('help-modal');
+      const helpModalContent = document.getElementById('help-modal-content');
+      const showHelpBtn = document.getElementById('show-help-btn');
+      const closeHelpModal = document.getElementById('close-help-modal');
+      const gotItBtn = document.getElementById('got-it-btn');
+      const loadingIndicator = document.getElementById('loading-indicator');
+      const themeToggle = document.getElementById('theme-toggle');
+
+      // 懒加载元素
+      const lazyLoadElements = document.querySelectorAll('.lazy-load');
+      
+      // 初始化懒加载
+      const lazyLoadObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('loaded');
+            lazyLoadObserver.unobserve(entry.target);
+          }
+        });
+      }, {
+        threshold: 0.1
+      });
+      
+      lazyLoadElements.forEach(el => {
+        lazyLoadObserver.observe(el);
+      });
+
+      // 视图切换
+      gridView.addEventListener('click', () => {
+        resultsGrid.classList.remove('hidden');
+        resultsList.classList.add('hidden');
+        gridView.classList.add('bg-primary', 'text-white');
+        gridView.classList.remove('bg-white', 'text-gray-700');
+        listView.classList.add('bg-white', 'text-gray-700');
+        listView.classList.remove('bg-primary', 'text-white');
+        
+        // 重新观察懒加载元素
+        document.querySelectorAll('#results-grid .lazy-load').forEach(el => {
+          if (!el.classList.contains('loaded')) {
+            lazyLoadObserver.observe(el);
+          }
+        });
+      });
+
+      listView.addEventListener('click', () => {
+        resultsGrid.classList.add('hidden');
+        resultsList.classList.remove('hidden');
+        listView.classList.add('bg-primary', 'text-white');
+        listView.classList.remove('bg-white', 'text-gray-700');
+        gridView.classList.add('bg-white', 'text-gray-700');
+        gridView.classList.remove('bg-primary', 'text-white');
+        
+        // 重新观察懒加载元素
+        document.querySelectorAll('#results-list .lazy-load').forEach(el => {
+          if (!el.classList.contains('loaded')) {
+            lazyLoadObserver.observe(el);
+          }
+        });
+      });
+
+      // 句对齐切换
+      sentenceAlignment.addEventListener('change', () => {
+        if (sentenceAlignment.checked) {
+          alignmentSection.classList.remove('hidden');
+          alignmentSection.classList.add('animate-fade-in');
+        } else {
+          alignmentSection.classList.add('hidden');
+        }
+      });
+
+      // 高亮差异切换
+      highlightDifferences.addEventListener('change', () => {
+        const results = document.querySelectorAll('.translation-result');
+        results.forEach(result => {
+          if (highlightDifferences.checked) {
+            result.innerHTML = highlightTextDifferences(result.textContent);
+          } else {
+            result.innerHTML = result.textContent;
+          }
+        });
+      });
+
+      // 翻译按钮点击事件
+      translateBtn.addEventListener('click', () => {
+        const text = sourceText.value.trim();
+        if (!text) {
+          // 添加抖动动画
+          sourceText.classList.add('animate-shake');
+          setTimeout(() => {
+            sourceText.classList.remove('animate-shake');
+          }, 500);
+          return;
+        }
+
+        // 显示加载指示器
+        loadingIndicator.classList.remove('hidden');
+
+        // 显示加载状态
+        translateBtn.disabled = true;
+        translateBtn.innerHTML = '<span class="relative z-10"><i class="fa fa-spinner fa-spin"></i> 翻译中...</span><div class="reflection"></div>';
+        
+        // 添加按钮按下效果
+        translateBtn.classList.add('translate-y-1', 'shadow-[0_2px_0_0_#cc5f00]');
+
+        // 使用Web Worker进行翻译处理
+        if (window.Worker) {
+          const worker = new Worker(URL.createObjectURL(new Blob([`
+            // 模拟翻译处理
+            self.onmessage = function(e) {
+              const { text, sourceLang, targetLang, models, modelStyles } = e.data;
+              const results = {};
+              
+              // 模拟处理时间
+              setTimeout(() => {
+                models.forEach(model => {
+                  // 计算翻译结果和评分
+                  const translation = simulateTranslation(text, sourceLang, targetLang, model.id, modelStyles);
+                  const score = calculateTranslationScore(translation, model.baseScore, modelStyles[model.id]);
+                  
+                  results[model.id] = {
+                    translation: translation,
+                    score: score
+                  };
+                });
+                
+                self.postMessage({ success: true, results });
+              }, 1500);
+            };
+            
+            // 模拟翻译函数
+            function simulateTranslation(text, sourceLang, targetLang, modelId, modelStyles) {
+              // 如果源语言和目标语言相同，直接返回原文
+              if (sourceLang === targetLang) {
+                return text;
+              }
+              
+              let translation = text;
+              
+              // 中文到英文的模拟翻译
+              if (sourceLang === 'zh' && targetLang === 'en') {
+                // 使用词典进行基本翻译
+                for (const [chinese, english] of Object.entries({
+                  '你好': 'Hello',
+                  '欢迎': 'welcome',
+                  '欢迎来到': 'welcome to',
+                  '参加': 'participate in',
+                  'AI': 'AI',
+                  '翻译': 'Translation',
+                  '对比': 'Comparison',
+                  '挑战赛': 'Challenge',
+                  '挑战': 'Challenge',
+                  '游戏': 'Game',
+                  '这是': 'This is',
+                  '一个': 'a',
+                  '展示': 'demonstration',
+                  '演示': 'demonstration',
+                  '示例': 'example',
+                  '不同': 'different',
+                  '各种': 'various',
+                  '模型': 'models',
+                  '如何': 'how',
+                  '翻译': 'translate',
+                  '相同': 'same',
+                  ' identical': 'identical',
+                  '文本': 'text',
+                  '你': 'You',
+                  '可以': 'can',
+                  '在': 'in',
+                  '下面': 'below',
+                  '结果': 'results',
+                  '中': 'in',
+                  '看到': 'see',
+                  '观察': 'observe',
+                  '突出': 'highlighted',
+                  '高亮': 'highlighted',
+                  '差异': 'differences',
+                  '！': '!',
+                  '。': '.',
+                  '，': ',',
+                  '！': '!',
+                  '？': '?'
+                })) {
+                  translation = translation.replace(new RegExp(chinese, 'g'), english);
+                }
+                
+                // 应用模型特定的风格
+                if (modelStyles[modelId]) {
+                  const style = modelStyles[modelId];
+                  
+                  // 应用前缀和后缀
+                  translation = style.prefix + translation + style.suffix;
+                  
+                  // 应用特定替换
+                  for (const [original, replacement] of Object.entries(style.substitutions)) {
+                    translation = translation.replace(new RegExp(original, 'g'), replacement);
+                  }
+                }
+                
+                // 调整大小写和标点
+                translation = translation.replace(/(\.|\!|\?)\s*([a-z])/g, (match, punctuation, letter) => {
+                  return punctuation + ' ' + letter.toUpperCase();
+                });
+                
+                // 确保句子开头大写
+                translation = translation.replace(/^([a-z])/, (match, letter) => {
+                  return letter.toUpperCase();
+                });
+                
+                // 修复常见的语法问题
+                translation = translation.replace(/\s+/g, ' ').trim();
+                translation = translation.replace(/\s+\./g, '.');
+                translation = translation.replace(/\s+\,/g, ',');
+                translation = translation.replace(/\s+\!/g, '!');
+                translation = translation.replace(/\s+\?/g, '?');
+              }
+              // 英文到中文的模拟翻译
+              else if (sourceLang === 'en' && targetLang === 'zh') {
+                // 基本的英文到中文翻译
+                const enToZh = {
+                  'Hello': '你好',
+                  'Hi': '嗨',
+                  'Hey': '嘿',
+                  'welcome': '欢迎',
+                  'welcome to': '欢迎来到',
+                  'participate in': '参加',
+                  'AI': 'AI',
+                  'Translation': '翻译',
+                  'Comparison': '对比',
+                  'Challenge': '挑战赛',
+                  'Game': '游戏',
+                  'This is': '这是',
+                  'a': '一个',
+                  'an': '一个',
+                  'demonstration': '演示',
+                  'example': '示例',
+                  'showing': '展示',
+                  'showcases': '展示',
+                  'different': '不同的',
+                  'various': '各种',
+                  'models': '模型',
+                  'how': '如何',
+                  'translate': '翻译',
+                  'same': '相同的',
+                  'identical': '完全相同的',
+                  'text': '文本',
+                  'You': '你',
+                  'can': '可以',
+                  'in': '在',
+                  'below': '下面',
+                  'results': '结果',
+                  'see': '看到',
+                  'observe': '观察',
+                  'highlighted': '高亮的',
+                  'differences': '差异',
+                  '!': '！',
+                  '.': '。',
+                  ',': '，',
+                  '?': '？'
+                };
+                
+                // 按长度排序，优先替换较长的短语
+                const sortedEntries = Object.entries(enToZh).sort((a, b) => b[0].length - a[0].length);
+                
+                for (const [english, chinese] of sortedEntries) {
+                  // 使用单词边界进行替换，避免部分替换
+                  const regex = new RegExp('\\b' + english.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'gi');
+                  translation = translation.replace(regex, chinese);
+                }
+                
+                // 应用模型特定的风格
+                if (modelStyles[modelId]) {
+                  const style = modelStyles[modelId];
+                  
+                  // 应用前缀和后缀
+                  translation = style.prefix + translation + style.suffix;
+                  
+                  // 应用特定替换（需要为中文创建对应的替换）
+                  const zhSubstitutions = {
+                    'Hello there': '你好啊',
+                    'demonstration that showcases': '展示的演示',
+                    'example showing': '展示的例子',
+                    'example of': '的例子'
+                  };
+                  
+                  for (const [original, replacement] of Object.entries(zhSubstitutions)) {
+                    const regex = new RegExp('\\b' + original.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'gi');
+                    translation = translation.replace(regex, replacement);
+                  }
+                }
+                
+                // 调整语序，使其更符合中文表达习惯
+                translation = translation.replace(/你可以在下面的结果中看到/g, '你可以在下面的结果中看到');
+                translation = translation.replace(/这是一个/g, '这是一个');
+                
+                // 修复常见的标点问题
+                translation = translation.replace(/\s+/g, '').trim();
+              }
+              
+              return translation;
+            }
+            
+            // 计算翻译评分
+            function calculateTranslationScore(translation, baseScore, modelStyle) {
+              let score = baseScore;
+              
+              // 根据模型风格调整分数
+              if (modelStyle) {
+                score += modelStyle.scoreAdjustment || 0;
+              }
+              
+              // 根据翻译质量调整分数
+              // 1. 检查是否包含关键词
+              const keywords = ['AI', 'Translation', 'Challenge', 'demonstration', 'models', 'translate', 'differences'];
+              const keywordCount = keywords.filter(keyword => translation.includes(keyword)).length;
+              score += (keywordCount - 4) * 2; // 基础期望4个关键词
+              
+              // 2. 检查句子长度（过长或过短都不好）
+              const wordCount = translation.split(/\s+/).length;
+              if (wordCount < 10) {
+                score -= (10 - wordCount) * 2; // 太短扣分
+              } else if (wordCount > 30) {
+                score -= (wordCount - 30); // 太长扣分
+              }
+              
+              // 3. 检查标点使用
+              const periodCount = (translation.match(/\./g) || []).length;
+              const commaCount = (translation.match(/,/g) || []).length;
+              
+              if (periodCount === 0) {
+                score -= 5; // 没有句号扣分
+              }
+              
+              // 4. 检查语法结构（简单检查）
+              if (!translation.includes(' ')) {
+                score -= 10; // 没有空格，可能是机器翻译
+              }
+              
+              // 5. 添加一些随机性，使评分更自然
+              score += Math.floor(Math.random() * 5) - 2; // -2 到 +2 的随机调整
+              
+              // 确保分数在合理范围内
+              score = Math.max(60, Math.min(100, score));
+              
+              return Math.round(score);
+            }
+          `], { type: 'application/javascript' })));
+          
+          worker.onmessage = function(e) {
+            if (e.data.success) {
+              performTranslation(text, e.data.results);
+            }
+            worker.terminate();
+          };
+          
+          worker.postMessage({ 
+            text, 
+            sourceLang: sourceLang.value, 
+            targetLang: targetLang.value, 
+            models, 
+            modelStyles 
+          });
+        } else {
+          // 降级方案：使用setTimeout
+          setTimeout(() => {
+            const results = {};
+            models.forEach(model => {
+              const translation = simulateTranslation(text, sourceLang.value, targetLang.value, model.id);
+              const score = calculateTranslationScore(translation, model.baseScore, modelStyles[model.id]);
+              results[model.id] = { translation, score };
+            });
+            performTranslation(text, results);
+          }, 1500);
+        }
+      });
+
+      // 模拟翻译函数（主线程备用）
+      function simulateTranslation(text, sourceLang, targetLang, modelId) {
+        // 如果源语言和目标语言相同，直接返回原文
+        if (sourceLang === targetLang) {
+          return text;
+        }
+        
+        let translation = text;
+        
+        // 中文到英文的模拟翻译
+        if (sourceLang === 'zh' && targetLang === 'en') {
+          // 使用词典进行基本翻译
+          for (const [chinese, english] of Object.entries(translationDictionary)) {
+            translation = translation.replace(new RegExp(chinese, 'g'), english);
+          }
+          
+          // 应用模型特定的风格
+          if (modelStyles[modelId]) {
+            const style = modelStyles[modelId];
+            
+            // 应用前缀和后缀
+            translation = style.prefix + translation + style.suffix;
+            
+            // 应用特定替换
+            for (const [original, replacement] of Object.entries(style.substitutions)) {
+              translation = translation.replace(new RegExp(original, 'g'), replacement);
+            }
+          }
+          
+          // 调整大小写和标点
+          translation = translation.replace(/(\.|\!|\?)\s*([a-z])/g, (match, punctuation, letter) => {
+            return punctuation + ' ' + letter.toUpperCase();
+          });
+          
+          // 确保句子开头大写
+          translation = translation.replace(/^([a-z])/, (match, letter) => {
+            return letter.toUpperCase();
+          });
+          
+          // 修复常见的语法问题
+          translation = translation.replace(/\s+/g, ' ').trim();
+          translation = translation.replace(/\s+\./g, '.');
+          translation = translation.replace(/\s+\,/g, ',');
+          translation = translation.replace(/\s+\!/g, '!');
+          translation = translation.replace(/\s+\?/g, '?');
+        }
+        // 英文到中文的模拟翻译
+        else if (sourceLang === 'en' && targetLang === 'zh') {
+          // 基本的英文到中文翻译
+          const enToZh = {
+            'Hello': '你好',
+            'Hi': '嗨',
+            'Hey': '嘿',
+            'welcome': '欢迎',
+            'welcome to': '欢迎来到',
+            'participate in': '参加',
+            'AI': 'AI',
+            'Translation': '翻译',
+            'Comparison': '对比',
+            'Challenge': '挑战赛',
+            'Game': '游戏',
+            'This is': '这是',
+            'a': '一个',
+            'an': '一个',
+            'demonstration': '演示',
+            'example': '示例',
+            'showing': '展示',
+            'showcases': '展示',
+            'different': '不同的',
+            'various': '各种',
+            'models': '模型',
+            'how': '如何',
+            'translate': '翻译',
+            'same': '相同的',
+            'identical': '完全相同的',
+            'text': '文本',
+            'You': '你',
+            'can': '可以',
+            'in': '在',
+            'below': '下面',
+            'results': '结果',
+            'see': '看到',
+            'observe': '观察',
+            'highlighted': '高亮的',
+            'differences': '差异',
+            '!': '！',
+            '.': '。',
+            ',': '，',
+            '?': '？'
+          };
+          
+          // 按长度排序，优先替换较长的短语
+          const sortedEntries = Object.entries(enToZh).sort((a, b) => b[0].length - a[0].length);
+          
+          for (const [english, chinese] of sortedEntries) {
+            // 使用单词边界进行替换，避免部分替换
+            const regex = new RegExp('\\b' + english.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'gi');
+            translation = translation.replace(regex, chinese);
+          }
+          
+          // 应用模型特定的风格
+          if (modelStyles[modelId]) {
+            const style = modelStyles[modelId];
+            
+            // 应用前缀和后缀
+            translation = style.prefix + translation + style.suffix;
+          }
+          
+          // 调整语序，使其更符合中文表达习惯
+          translation = translation.replace(/你可以在下面的结果中看到/g, '你可以在下面的结果中看到');
+          translation = translation.replace(/这是一个/g, '这是一个');
+          
+          // 修复常见的标点问题
+          translation = translation.replace(/\s+/g, '').trim();
+        }
+        
+        return translation;
+      }
+
+      // 计算翻译评分
+      function calculateTranslationScore(translation, baseScore, modelStyle) {
+        let score = baseScore;
+        
+        // 根据模型风格调整分数
+        if (modelStyle) {
+          score += modelStyle.scoreAdjustment || 0;
+        }
+        
+        // 根据翻译质量调整分数
+        // 1. 检查是否包含关键词
+        const keywords = ['AI', 'Translation', 'Challenge', 'demonstration', 'models', 'translate', 'differences'];
+        const keywordCount = keywords.filter(keyword => translation.includes(keyword)).length;
+        score += (keywordCount - 4) * 2; // 基础期望4个关键词
+        
+        // 2. 检查句子长度（过长或过短都不好）
+        const wordCount = translation.split(/\s+/).length;
+        if (wordCount < 10) {
+          score -= (10 - wordCount) * 2; // 太短扣分
+        } else if (wordCount > 30) {
+          score -= (wordCount - 30); // 太长扣分
+        }
+        
+        // 3. 检查标点使用
+        const periodCount = (translation.match(/\./g) || []).length;
+        const commaCount = (translation.match(/,/g) || []).length;
+        
+        if (periodCount === 0) {
+          score -= 5; // 没有句号扣分
+        }
+        
+        // 4. 检查语法结构（简单检查）
+        if (!translation.includes(' ')) {
+          score -= 10; // 没有空格，可能是机器翻译
+        }
+        
+        // 5. 添加一些随机性，使评分更自然
+        score += Math.floor(Math.random() * 5) - 2; // -2 到 +2 的随机调整
+        
+        // 确保分数在合理范围内
+        score = Math.max(60, Math.min(100, score));
+        
+        return Math.round(score);
+      }
+
+      // 执行翻译
+      function performTranslation(text, workerResults) {
+        // 将文本按句子分割
+        const sentences = text.split(/(?<=[.!?。！？])\s+/);
+        
+        // 更新句对齐表格
+        updateAlignmentTable(sentences, workerResults);
+        
+        // 更新翻译结果
+        updateTranslationResults(sentences, workerResults);
+        
+        // 更新最佳翻译
+        updateBestTranslation(workerResults);
+        
+        // 隐藏加载指示器
+        loadingIndicator.classList.add('hidden');
+        
+        // 恢复按钮状态
+        translateBtn.disabled = false;
+        translateBtn.innerHTML = '<span class="relative z-10"><i class="fa fa-bolt"></i> 开始翻译</span><div class="reflection"></div>';
+        translateBtn.classList.remove('translate-y-1', 'shadow-[0_2px_0_0_#cc5f00]');
+        
+        // 播放成功音效（可选）
+        if (navigator.vibrate) {
+          navigator.vibrate([50, 100, 50]);
+        }
+      }
+
+      // 更新句对齐表格
+      function updateAlignmentTable(sentences, workerResults) {
+        alignmentTable.innerHTML = '';
+        
+        sentences.forEach(sentence => {
+          const row = document.createElement('div');
+          row.className = 'grid grid-cols-7';
+          
+          // 添加原文单元格
+          const originalCell = document.createElement('div');
+          originalCell.className = 'px-4 py-3 whitespace-nowrap col-span-2';
+          originalCell.textContent = sentence;
+          row.appendChild(originalCell);
+          
+          // 添加各模型翻译结果单元格
+          models.forEach(model => {
+            const cell = document.createElement('div');
+            cell.className = `px-4 py-3 whitespace-nowrap bg-${model.id}/10`;
+            
+            // 获取翻译结果
+            let translation;
+            if (workerResults && workerResults[model.id]) {
+              // 从完整翻译中提取对应句子的翻译
+              const fullTranslation = workerResults[model.id].translation;
+              // 简单的句子匹配（实际应用中需要更复杂的对齐算法）
+              translation = getSentenceTranslation(sentence, fullTranslation, model.id);
+            } else {
+              translation = simulateTranslation(sentence, sourceLang.value, targetLang.value, model.id);
+            }
+            
+            // 如果启用了差异高亮
+            if (highlightDifferences.checked) {
+              cell.innerHTML = highlightTextDifferences(translation);
+            } else {
+              cell.textContent = translation;
+            }
+            
+            row.appendChild(cell);
+          });
+          
+          alignmentTable.appendChild(row);
+        });
+      }
+
+      // 从完整翻译中提取句子翻译（简化版）
+      function getSentenceTranslation(originalSentence, fullTranslation, modelId) {
+        // 这是一个简化的实现，实际应用中需要更复杂的对齐算法
+        const sourceLang = document.getElementById('source-lang').value;
+        const targetLang = document.getElementById('target-lang').value;
+        
+        // 如果源语言和目标语言相同，直接返回原句
+        if (sourceLang === targetLang) {
+          return originalSentence;
+        }
+        
+        // 对于中英文之间的翻译，使用简单的关键词匹配
+        if ((sourceLang === 'zh' && targetLang === 'en') || (sourceLang === 'en' && targetLang === 'zh')) {
+          // 按句号分割完整翻译
+          const translatedSentences = fullTranslation.split(/[.!?。！？]/).filter(s => s.trim());
+          
+          // 简单的长度匹配
+          const originalLength = originalSentence.length;
+          let bestMatch = translatedSentences[0] || fullTranslation;
+          let minLengthDiff = Math.abs(translatedSentences[0].length - originalLength);
+          
+          translatedSentences.forEach(s => {
+            const lengthDiff = Math.abs(s.length - originalLength);
+            if (lengthDiff < minLengthDiff) {
+              minLengthDiff = lengthDiff;
+              bestMatch = s;
+            }
+          });
+          
+          return bestMatch.trim();
+        }
+        
+        return fullTranslation;
+      }
+
+      // 更新翻译结果
+      function updateTranslationResults(sentences, workerResults) {
+        models.forEach(model => {
+          // 获取翻译结果
+          let fullTranslation = '';
+          
+          if (workerResults && workerResults[model.id]) {
+            fullTranslation = workerResults[model.id].translation;
+          } else {
+            // 如果没有worker结果，使用模拟翻译
+            fullTranslation = simulateTranslation(sourceText.value, sourceLang.value, targetLang.value, model.id);
+          }
+          
+          // 更新网格视图
+          const gridResult = document.querySelector(`.translation-result[data-model="${model.id}"]`);
+          if (gridResult) {
+            if (highlightDifferences.checked) {
+              gridResult.innerHTML = highlightTextDifferences(fullTranslation);
+            } else {
+              gridResult.textContent = fullTranslation;
+            }
+            
+            // 添加淡入动画
+            gridResult.classList.add('animate-fade-in');
+            setTimeout(() => {
+              gridResult.classList.remove('animate-fade-in');
+            }, 500);
+          }
+          
+          // 更新列表视图
+          const listResult = document.querySelector(`.translation-result[data-model="${model.id}-list"]`);
+          if (listResult) {
+            if (highlightDifferences.checked) {
+              listResult.innerHTML = highlightTextDifferences(fullTranslation);
+            } else {
+              listResult.textContent = fullTranslation;
+            }
+            
+            // 添加淡入动画
+            listResult.classList.add('animate-fade-in');
+            setTimeout(() => {
+              listResult.classList.remove('animate-fade-in');
+            }, 500);
+          }
+          
+          // 更新评分
+          if (workerResults && workerResults[model.id]) {
+            const score = workerResults[model.id].score;
+            
+            // 更新网格视图评分
+            const gridScoreElement = document.querySelector(`[data-model="${model.id}"] ~ div .font-bold:last-child`);
+            if (gridScoreElement) {
+              gridScoreElement.textContent = `${score}%`;
+            }
+            
+            // 更新列表视图评分
+            const listScoreElement = document.querySelector(`[data-model="${model.id}-list"] ~ div .font-bold.text-${model.id}`);
+            if (listScoreElement) {
+              listScoreElement.textContent = `${score}%`;
+            }
+            
+            // 更新进度条
+            const progressBars = document.querySelectorAll(`[data-model="${model.id}"] ~ div .progress-value, [data-model="${model.id}-list"] ~ div .progress-value`);
+            progressBars.forEach(bar => {
+              bar.style.width = `${score}%`;
+            });
+            
+            // 更新星级评分
+            updateStarRating(model.id, score);
+          }
+        });
+      }
+
+      // 更新星级评分
+      function updateStarRating(modelId, score) {
+        // 将分数转换为星级（0-5星）
+        const stars = Math.round(score / 20); // 60分=3星，100分=5星
+        
+        // 更新网格视图星级
+        const gridStarContainer = document.querySelector(`.model-card.border-${modelId} .star-rating`);
+        if (gridStarContainer) {
+          updateStarIcons(gridStarContainer, stars);
+        }
+        
+        // 更新列表视图星级
+        const listStarContainer = document.querySelector(`.model-card.border-${modelId}.bg-white .star-rating`);
+        if (listStarContainer) {
+          updateStarIcons(listStarContainer, stars);
+        }
+      }
+
+      // 更新星星图标
+      function updateStarIcons(container, stars) {
+        const starElements = container.querySelectorAll('i');
+        starElements.forEach((star, index) => {
+          if (index < stars) {
+            star.className = 'fa fa-star star-filled';
+          } else {
+            star.className = 'fa fa-star star-empty';
+          }
+        });
+      }
+
+      // 更新最佳翻译
+      function updateBestTranslation(workerResults) {
+        // 按评分排序找到最佳翻译
+        let sortedModels;
+        if (workerResults) {
+          sortedModels = [...models].sort((a, b) => {
+            const scoreA = workerResults[a.id] ? workerResults[a.id].score : a.baseScore;
+            const scoreB = workerResults[b.id] ? workerResults[b.id].score : b.baseScore;
+            return scoreB - scoreA;
+          });
+        } else {
+          sortedModels = [...models].sort((a, b) => b.baseScore - a.baseScore);
+        }
+        
+        const bestModel = sortedModels[0];
+        const bestScore = workerResults && workerResults[bestModel.id] ? workerResults[bestModel.id].score : bestModel.baseScore;
+        const bestTranslation = workerResults && workerResults[bestModel.id] ? workerResults[bestModel.id].translation : simulateTranslation(sourceText.value, sourceLang.value, targetLang.value, bestModel.id);
+        
+        // 更新最佳翻译展示
+        const bestTranslationElement = document.querySelector('.bg-green-50 .flex.flex-col');
+        if (bestTranslationElement) {
+          // 更新图标
+          const iconElement = bestTranslationElement.querySelector('.w-10.h-10 i');
+          if (iconElement) {
+            iconElement.className = `fa ${bestModel.icon}`;
+          }
+          
+          // 更新背景色
+          const iconContainer = bestTranslationElement.querySelector('.w-10.h-10');
+          if (iconContainer) {
+            iconContainer.className = `w-10 h-10 rounded-full bg-${bestModel.id} flex items-center justify-center text-white font-bold shadow-md`;
+          }
+          
+          // 更新模型名称
+          const nameElement = bestTranslationElement.querySelector('p.font-bold');
+          if (nameElement) {
+            nameElement.textContent = `${bestModel.name} (${bestScore}%)`;
+          }
+          
+          // 更新翻译文本
+          const translationElement = bestTranslationElement.querySelector('p.text-green-800');
+          if (translationElement) {
+            translationElement.textContent = bestTranslation;
+          }
+          
+          // 添加动画效果
+          bestTranslationElement.parentElement.classList.add('scale-105');
+          setTimeout(() => {
+            bestTranslationElement.parentElement.classList.remove('scale-105');
+          }, 300);
+        }
+        
+        // 更新差异分析
+        updateDifferenceAnalysis(workerResults);
+      }
+
+      // 更新差异分析
+      function updateDifferenceAnalysis(workerResults) {
+        if (!workerResults) return;
+        
+        // 收集所有翻译结果
+        const translations = {};
+        models.forEach(model => {
+          if (workerResults[model.id]) {
+            translations[model.id] = workerResults[model.id].translation;
+          }
+        });
+        
+        // 分析用词差异
+        const wordDifferences = analyzeWordDifferences(translations);
+        updateWordDifferencesList(wordDifferences);
+        
+        // 分析句式差异
+        const sentenceDifferences = analyzeSentenceDifferences(translations);
+        updateSentenceDifferencesList(sentenceDifferences);
+        
+        // 更新模型性能排名
+        updateModelRanking(workerResults);
+      }
+
+      // 分析用词差异
+      function analyzeWordDifferences(translations) {
+        const differences = [];
+        
+        // 提取关键词及其不同翻译
+        const keywordMap = {
+          '欢迎': [],
+          '展示': [],
+          '不同': [],
+          '相同': [],
+          '看到': []
+        };
+        
+        // 收集各模型对关键词的翻译
+        Object.entries(translations).forEach(([modelId, translation]) => {
+          const model = models.find(m => m.id === modelId);
+          if (!model) return;
+          
+          // 简单的关键词提取（实际应用中需要更复杂的NLP技术）
+          if (translation.includes('Hello')) keywordMap['欢迎'].push(`"Hello" (${model.name})`);
+          if (translation.includes('Hello there')) keywordMap['欢迎'].push(`"Hello there" (${model.name})`);
+          if (translation.includes('Hi')) keywordMap['欢迎'].push(`"Hi" (${model.name})`);
+          if (translation.includes('Hey')) keywordMap['欢迎'].push(`"Hey" (${model.name})`);
+          
+          if (translation.includes('demonstration')) keywordMap['展示'].push(`"demonstration" (${model.name})`);
+          if (translation.includes('example')) keywordMap['展示'].push(`"example" (${model.name})`);
+          if (translation.includes('showing')) keywordMap['展示'].push(`"showing" (${model.name})`);
+          
+          if (translation.includes('different')) keywordMap['不同'].push(`"different" (${model.name})`);
+          if (translation.includes('various')) keywordMap['不同'].push(`"various" (${model.name})`);
+          
+          if (translation.includes('same')) keywordMap['相同'].push(`"same" (${model.name})`);
+          if (translation.includes('identical')) keywordMap['相同'].push(`"identical" (${model.name})`);
+          
+          if (translation.includes('see')) keywordMap['看到'].push(`"see" (${model.name})`);
+          if (translation.includes('observe')) keywordMap['看到'].push(`"observe" (${model.name})`);
+        });
+        
+        // 生成差异描述
+        Object.entries(keywordMap).forEach(([keyword, translations]) => {
+          if (translations.length > 1) {
+            const uniqueTranslations = [...new Set(translations)];
+            if (uniqueTranslations.length > 1) {
+              differences.push(`${uniqueTranslations.join(' vs ')} - 对"${keyword}"的不同翻译`);
+            }
+          }
+        });
+        
+        return differences;
+      }
+
+      // 分析句式差异
+      function analyzeSentenceDifferences(translations) {
+        const differences = [];
+        
+        // 分析各模型的句式特点
+        Object.entries(translations).forEach(([modelId, translation]) => {
+          const model = models.find(m => m.id === modelId);
+          if (!model) return;
+          
+          const特点 = [];
+          
+          // 分析句子长度
+          const wordCount = translation.split(/\s+/).length;
+          if (wordCount < 20) {
+           特点.push('使用更简洁的句式结构');
+          } else if (wordCount > 30) {
+           特点.push('使用更详细、更完整的句式');
+          }
+          
+          // 分析是否有额外词汇
+          if (translation.includes('there') || translation.includes('that')) {
+           特点.push('添加了额外的修饰词');
+          }
+          
+          // 分析口语化程度
+          if (translation.includes('Hi') || translation.includes('Hey')) {
+           特点.push('表述更口语化');
+          }
+          
+          // 分析是否有省略
+          if (!translation.includes('the')) {
+           特点.push('省略了冠词');
+          }
+          
+          if (特点.length > 0) {
+            differences.push(`${model.name}${特点[0]}`);
+          }
+        });
+        
+        return differences;
+      }
+
+      // 更新用词差异列表
+      function updateWordDifferencesList(differences) {
+        const listElement = document.querySelector('.list-disc.list-inside.space-y-2.text-gray-600.bg-white.p-4.rounded-lg.shadow-sm:first-of-type');
+        if (listElement) {
+          listElement.innerHTML = '';
+          differences.slice(0, 6).forEach(difference => {
+            const li = document.createElement('li');
+            li.textContent = difference;
+            listElement.appendChild(li);
+          });
+        }
+      }
+
+      // 更新句式差异列表
+      function updateSentenceDifferencesList(differences) {
+        const listElement = document.querySelectorAll('.list-disc.list-inside.space-y-2.text-gray-600.bg-white.p-4.rounded-lg.shadow-sm')[1];
+        if (listElement) {
+          listElement.innerHTML = '';
+          differences.slice(0, 5).forEach(difference => {
+            const li = document.createElement('li');
+            li.textContent = difference;
+            listElement.appendChild(li);
+          });
+        }
+      }
+
+      // 更新模型性能排名
+      function updateModelRanking(workerResults) {
+        // 按评分排序
+        const sortedModels = [...models].sort((a, b) => {
+          const scoreA = workerResults[a.id] ? workerResults[a.id].score : a.baseScore;
+          const scoreB = workerResults[b.id] ? workerResults[b.id].score : b.baseScore;
+          return scoreB - scoreA;
+        });
+        
+        // 获取排名容器
+        const rankingContainer = document.querySelector('.space-y-3');
+        if (!rankingContainer) return;
+        
+        // 清空现有排名
+        rankingContainer.innerHTML = '';
+        
+        // 添加前三名
+        sortedModels.slice(0, 3).forEach((model, index) => {
+          const score = workerResults[model.id] ? workerResults[model.id].score : model.baseScore;
+          
+          const rankElement = document.createElement('div');
+          rankElement.className = 'flex items-center gap-3 bg-white p-3 rounded-lg shadow-sm transform transition-all duration-300 hover:shadow-md';
+          
+          // 排名数字背景色
+          let rankBgColor = 'bg-gray-300';
+          if (index === 0) rankBgColor = 'bg-yellow-500';
+          else if (index === 1) rankBgColor = 'bg-gray-300';
+          else if (index === 2) rankBgColor = 'bg-amber-700';
+          
+          rankElement.innerHTML = `
+            <div class="w-8 h-8 rounded-full ${rankBgColor} flex items-center justify-center text-white font-bold shadow-md">${index + 1}</div>
+            <div class="w-10 h-10 rounded-full bg-${model.id} flex items-center justify-center text-white font-bold shadow-md">
+              <i class="fa ${model.icon}"></i>
+            </div>
+            <div class="flex-1">
+              <div class="flex justify-between items-center mb-1">
+                <p class="font-bold">${model.name}</p>
+                <p class="font-bold text-${model.id}">${score}%</p>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-value bg-${model.id}" style="width: ${score}%">
+                  <div class="reflection"></div>
+                </div>
+              </div>
+            </div>
+          `;
+          
+          rankingContainer.appendChild(rankElement);
+        });
+      }
+
+      // 高亮文本差异
+      function highlightTextDifferences(text) {
+        // 这里使用简单的高亮逻辑，实际应用中可以使用更复杂的差异算法
+        const keywords = ['Hello', 'Hi', 'Hey', 'welcome', 'demonstration', 'example', 'different', 'various', 'same', 'identical', 'see', 'observe', 'highlighted', 'differences', 'AI', 'Translation', 'Challenge'];
+        
+        let highlightedText = text;
+        keywords.forEach(keyword => {
+          const regex = new RegExp(`(${keyword})`, 'gi');
+          highlightedText = highlightedText.replace(regex, '<span class="diff-highlight">$1</span>');
+        });
+        
+        return highlightedText;
+      }
+
+      // 下载句对齐结果
+      downloadAligned.addEventListener('click', () => {
+        const sourceText = document.getElementById('source-text').value;
+        const sentences = sourceText.split(/(?<=[.!?。！？])\s+/);
+        
+        let csvContent = '原文,豆包,DeepSeek,智谱清言,Kimi,文心一言,元宝\n';
+        
+        sentences.forEach(sentence => {
+          let row = `"${sentence}"`;
+          
+          models.forEach(model => {
+            const translation = simulateTranslation(sentence, sourceLang.value, targetLang.value, model.id);
+            row += `,"${translation}"`;
+          });
+          
+          csvContent += row + '\n';
+        });
+        
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        saveAs(blob, '翻译挑战结果_句对齐.csv');
+        
+        // 添加按钮点击效果
+        downloadAligned.classList.add('translate-y-1', 'shadow-[0_2px_0_0_#cc5f00]');
+        setTimeout(() => {
+          downloadAligned.classList.remove('translate-y-1', 'shadow-[0_2px_0_0_#cc5f00]');
+        }, 200);
+      });
+
+      // 下载非对齐结果
+      downloadUnaligned.addEventListener('click', () => {
+        const sourceText = document.getElementById('source-text').value;
+        
+        let csvContent = '模型,翻译结果,匹配度\n';
+        
+        models.forEach(model => {
+          const translation = simulateTranslation(sourceText, sourceLang.value, targetLang.value, model.id);
+          const score = calculateTranslationScore(translation, model.baseScore, modelStyles[model.id]);
+          
+          csvContent += `"${model.name}","${translation}",${score}%\n`;
+        });
+        
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        saveAs(blob, '翻译挑战结果_非对齐.csv');
+        
+        // 添加按钮点击效果
+        downloadUnaligned.classList.add('translate-y-1', 'shadow-[0_2px_0_0_#cc5f00]');
+        setTimeout(() => {
+          downloadUnaligned.classList.remove('translate-y-1', 'shadow-[0_2px_0_0_#cc5f00]');
+        }, 200);
+      });
+
+      // 下载纯译文
+      downloadTranslations.addEventListener('click', () => {
+        const sourceText = document.getElementById('source-text').value;
+        
+        let content = `原文：\n${sourceText}\n\n`;
+        content += '翻译挑战结果：\n\n';
+        
+        models.forEach(model => {
+          const translation = simulateTranslation(sourceText, sourceLang.value, targetLang.value, model.id);
+          const score = calculateTranslationScore(translation, model.baseScore, modelStyles[model.id]);
+          
+          content += `${model.name}（匹配度：${score}%）：\n${translation}\n\n`;
+        });
+        
+        const blob = new Blob([content], { type: 'text/plain;charset=utf-8;' });
+        saveAs(blob, '翻译挑战结果_纯译文.txt');
+        
+        // 添加按钮点击效果
+        downloadTranslations.classList.add('translate-y-1', 'shadow-[0_2px_0_0_#cc5f00]');
+        setTimeout(() => {
+          downloadTranslations.classList.remove('translate-y-1', 'shadow-[0_2px_0_0_#cc5f00]');
+        }, 200);
+      });
+
+      // 模态框相关事件
+      function showModal(modal, modalContent) {
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+          modalContent.classList.remove('scale-95', 'opacity-0');
+          modalContent.classList.add('scale-100', 'opacity-100');
+        }, 10);
+      }
+
+      function hideModal(modal, modalContent) {
+        modalContent.classList.remove('scale-100', 'opacity-100');
+        modalContent.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => {
+          modal.classList.add('hidden');
+        }, 300);
+      }
+
+      showApiBtn.addEventListener('click', () => {
+        showModal(apiModal, modalContent);
+      });
+
+      closeModal.addEventListener('click', () => {
+        hideModal(apiModal, modalContent);
+      });
+
+      cancelApi.addEventListener('click', () => {
+        hideModal(apiModal, modalContent);
+      });
+
+      saveApi.addEventListener('click', () => {
+        // 保存API配置到localStorage
+        const apiKeys = {
+          doubao: document.getElementById('doubao-api-key').value,
+          deepseek: document.getElementById('deepseek-api-key').value,
+          zhipu: document.getElementById('zhipu-api-key').value,
+          kimi: document.getElementById('kimi-api-key').value,
+          ernie: document.getElementById('ernie-api-key').value,
+          yuanbao: document.getElementById('yuanbao-api-key').value
+        };
+        
+        localStorage.setItem('ai_translator_api_keys', JSON.stringify(apiKeys));
+        
+        // 显示成功提示
+        showToast('API配置已保存！', 'success');
+        
+        hideModal(apiModal, modalContent);
+      });
+
+      // 帮助模态框相关事件
+      showHelpBtn.addEventListener('click', () => {
+        showModal(helpModal, helpModalContent);
+      });
+
+      closeHelpModal.addEventListener('click', () => {
+        hideModal(helpModal, helpModalContent);
+      });
+
+      gotItBtn.addEventListener('click', () => {
+        hideModal(helpModal, helpModalContent);
+      });
+
+      // 点击模态框背景关闭
+      apiModal.addEventListener('click', (e) => {
+        if (e.target === apiModal) {
+          hideModal(apiModal, modalContent);
+        }
+      });
+
+      helpModal.addEventListener('click', (e) => {
+        if (e.target === helpModal) {
+          hideModal(helpModal, helpModalContent);
+        }
+      });
+
+      // 主题切换
+      themeToggle.addEventListener('click', () => {
+        document.documentElement.classList.toggle('dark');
+        const isDark = document.documentElement.classList.contains('dark');
+        themeToggle.innerHTML = isDark ? '<i class="fa fa-sun-o"></i>' : '<i class="fa fa-moon-o"></i>';
+        localStorage.setItem('ai_translator_theme', isDark ? 'dark' : 'light');
+      });
+
+      // 初始化主题
+      if (localStorage.getItem('ai_translator_theme') === 'dark' || 
+          (!localStorage.getItem('ai_translator_theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+        themeToggle.innerHTML = '<i class="fa fa-sun-o"></i>';
+      }
+
+      // 初始化API密钥
+      const savedApiKeys = localStorage.getItem('ai_translator_api_keys');
+      if (savedApiKeys) {
+        const apiKeys = JSON.parse(savedApiKeys);
+        Object.keys(apiKeys).forEach(key => {
+          const element = document.getElementById(`${key}-api-key`);
+          if (element) {
+            element.value = apiKeys[key];
+          }
+        });
+      }
+
+      // 初始化页面
+      document.addEventListener('DOMContentLoaded', () => {
+        // 高亮显示差异
+        if (highlightDifferences.checked) {
+          const results = document.querySelectorAll('.translation-result');
+          results.forEach(result => {
+            result.innerHTML = highlightTextDifferences(result.textContent);
+          });
+        }
+        
+        // 显示帮助模态框（仅首次访问）
+        if (!localStorage.getItem('ai_translator_help_shown')) {
+          setTimeout(() => {
+            showModal(helpModal, helpModalContent);
+            localStorage.setItem('ai_translator_help_shown', 'true');
+          }, 1000);
+        }
+      });
+
+      // Toast提示函数
+      function showToast(message, type = 'info') {
+        const toast = document.createElement('div');
+        toast.className = `fixed top-4 right-4 px-4 py-2 rounded-lg shadow-lg z-50 transform transition-all duration-300 translate-x-full ${
+          type === 'success' ? 'bg-green-500' : 
+          type === 'error' ? 'bg-red-500' : 
+          'bg-blue-500'
+        } text-white`;
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        
+        // 显示动画
+        setTimeout(() => {
+          toast.classList.remove('translate-x-full');
+        }, 10);
+        
+        // 3秒后隐藏
+        setTimeout(() => {
+          toast.classList.add('translate-x-full');
+          setTimeout(() => {
+            document.body.removeChild(toast);
+          }, 300);
+        }, 3000);
+      }
+
+      // 键盘快捷键
+      document.addEventListener('keydown', (e) => {
+        // Ctrl/Cmd + Enter 开始翻译
+        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+          e.preventDefault();
+          translateBtn.click();
+        }
+        
+        // Ctrl/Cmd + K 打开API配置
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+          e.preventDefault();
+          showModal(apiModal, modalContent);
+        }
+        
+        // ESC 关闭模态框
+        if (e.key === 'Escape') {
+          if (!apiModal.classList.contains('hidden')) {
+            hideModal(apiModal, modalContent);
+          }
+          if (!helpModal.classList.contains('hidden')) {
+            hideModal(helpModal, helpModalContent);
+          }
+        }
+      });
+
+      // 窗口大小变化时重新布局
+      window.addEventListener('resize', debounce(() => {
+        // 重新观察懒加载元素
+        lazyLoadElements.forEach(el => {
+          if (!el.classList.contains('loaded')) {
+            lazyLoadObserver.observe(el);
+          }
+        });
+      }, 250));
+
+      // 防抖函数
+      function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+          const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+          };
+          clearTimeout(timeout);
+          timeout = setTimeout(later, wait);
+        };
+      }
+    });
+  </script>
+</body>
+</html>
