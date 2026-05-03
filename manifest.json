@@ -1,0 +1,57 @@
+{
+  "name": "AI翻译对比挑战赛",
+  "short_name": "AI翻译对比",
+  "description": "比较豆包、DeepSeek、智谱清言、Kimi、文心一言、元宝等AI模型的翻译能力",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFF8E7",
+  "theme_color": "#FF7A00",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "https://p26-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/ff9b58cc9dd041ecbbb172d179cec8fa~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=20260503105828F3AFFC0667FD95B8873C&rrcfp=f06b921b&x-expires=1780369159&x-signature=CTb5RNM7Ogpt%2FgUEjuHlf%2FtEznk%3D",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://p26-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/ff9b58cc9dd041ecbbb172d179cec8fa~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=20260503105828F3AFFC0667FD95B8873C&rrcfp=f06b921b&x-expires=1780369159&x-signature=CTb5RNM7Ogpt%2FgUEjuHlf%2FtEznk%3D",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "开始翻译",
+      "short_name": "翻译",
+      "description": "开始新的翻译对比",
+      "url": "/?action=translate",
+      "icons": [{ "src": "https://p26-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/ff9b58cc9dd041ecbbb172d179cec8fa~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=20260503105828F3AFFC0667FD95B8873C&rrcfp=f06b921b&x-expires=1780369159&x-signature=CTb5RNM7Ogpt%2FgUEjuHlf%2FtEznk%3D", "sizes": "96x96" }]
+    },
+    {
+      "name": "API配置",
+      "short_name": "配置",
+      "description": "配置API密钥",
+      "url": "/?action=config",
+      "icons": [{ "src": "https://p26-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/ff9b58cc9dd041ecbbb172d179cec8fa~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=20260503105828F3AFFC0667FD95B8873C&rrcfp=f06b921b&x-expires=1780369159&x-signature=CTb5RNM7Ogpt%2FgUEjuHlf%2FtEznk%3D", "sizes": "96x96" }]
+    }
+  ],
+  "categories": ["productivity", "education", "utilities"],
+  "lang": "zh-CN",
+  "dir": "ltr",
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "iarc_rating_id": "",
+  "screenshots": [],
+  "share_target": {
+    "action": "/share-target/",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  }
+}

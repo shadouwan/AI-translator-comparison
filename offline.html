@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>离线模式 - AI翻译对比挑战赛</title>
+  <style>
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 2rem;
+      background-color: #FFF8E7;
+      color: #374151;
+      text-align: center;
+    }
+    
+    .container {
+      max-width: 600px;
+      padding: 2rem;
+      background-color: white;
+      border-radius: 1rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    
+    h1 {
+      color: #FF7A00;
+      margin-bottom: 1rem;
+    }
+    
+    p {
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+    
+    .icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      color: #FF7A00;
+    }
+    
+    .button {
+      background-color: #FF7A00;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 0.5rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .button:hover {
+      background-color: #cc5f00;
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="icon">📶</div>
+    <h1>您当前处于离线状态</h1>
+    <p>无法连接到互联网。您可以使用以下功能：</p>
+    <ul style="text-align: left; margin-bottom: 1.5rem;">
+      <li>查看之前翻译的历史记录</li>
+      <li>使用本地模拟数据进行翻译演示</li>
+      <li>配置API密钥（将在重新连接后生效）</li>
+    </ul>
+    <p>请检查您的网络连接并重试。</p>
+    <button class="button" onclick="window.location.reload()">重新连接</button>
+  </div>
+
+  <script>
+    // 检测网络状态变化
+    window.addEventListener('online', () => {
+      window.location.reload();
+    });
+  </script>
+</body>
+</html>
